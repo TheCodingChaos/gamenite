@@ -1,18 +1,26 @@
 # Standard library imports
 
 # Remote library imports
-from flask import Flask
+from flask import Flask, make_response
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from flask_bcrypt import Bcrypt
+from flask_marshmallow import Marshmallow
+from dotenv import load_dotenv
+
 
 # Local imports
+import os
 
 # Instantiate app, set attributes
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app = Flask(__name__,
+            static_folder='../client/build',
+            template_folder='../client/build'
+            )
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 
@@ -29,3 +37,9 @@ api = Api(app)
 
 # Instantiate CORS
 CORS(app)
+
+bcrypt = Bcrypt()
+ma = Marshmallow()
+
+bcrypt.init_app(app)
+ma.init_app(app)
