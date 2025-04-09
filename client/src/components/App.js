@@ -1,8 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import routes from "../routes";
 
 function App() {
-  return <h1>Project Client</h1>;
+  const [user, setUser] = useState(null);
+
+  return (
+    <Routes>
+      {routes.map(({ path, element, protected: isProtected }) => (
+        <Route
+          key={path}
+          path={path}
+          element={
+            isProtected && !user ? (
+              <Navigate to="/login" replace />
+            ) : React.cloneElement(element, {
+                onLogin: setUser,
+                onSignup: setUser,
+                user
+            })
+          }
+        />
+      ))}
+    </Routes>
+  );
 }
 
 export default App;
